@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion Input member variables
 
-    private Vector2 kBoundBox;
+    private Vector3 kBoundBox;
     public float mSpeed = 2.0f;
 
     /// <summary>
@@ -34,18 +34,18 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool mCanJump;
 
-    private float mJumpVelocity;
-
     public float kJumpSpeed = 5f;
 
     public bool IsGrounded { get { return mIsGrounded; } }
+
+    private int kTerrainMask;
 
     public string DebugString
     {
         get
         {
-            return string.Format("Is Grounded: {0}\nInput: {1}\njumpVelocity: {2}\nJumpPressed: {3}\nCanJump: {4}\nJumpProbe: {5}",
-                IsGrounded, mInputAxes, mJumpVelocity, mInputJumpPressed, mCanJump, mJumpVelocity * Time.deltaTime);
+            return string.Format("Is Grounded: {0}\nInput: {1}\nJumpPressed: {2}\nCanJump: {3}",
+                IsGrounded, mInputAxes, mInputJumpPressed, mCanJump);
         }
     }
 
@@ -53,16 +53,13 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         mInputAxes = Vector2.zero;
-        kBoundBox = GetComponent<BoxCollider2D>().bounds.size * 0.8f;
+        kBoundBox = GetComponent<BoxCollider>().bounds.size;
+        kTerrainMask = LayerMask.GetMask("Terrain");
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Apply vertical movement
-        mJumpVelocity = (IsGrounded) ? 0.0f : mJumpVelocity + Physics2D.gravity.y * 3f * Time.deltaTime;
-        transform.Translate(0, mJumpVelocity * Time.deltaTime, 0);
-
         GetGroundStatus();
         GetInput();
         switch (mState)
@@ -78,12 +75,15 @@ public class PlayerController : MonoBehaviour
 
     private void GetGroundStatus()
     {
-        RaycastHit2D castHit = Physics2D.BoxCast(transform.position, kBoundBox, 0, transform.up * -1.0f, Mathf.Max(0.2f, Mathf.Abs(mJumpVelocity * Time.deltaTime)));
-        if (castHit.collider != null)
+        if (Physics.CheckSphere(transform.position + (transform.up * -1 * kBoundBox.y * 0.5f), 0.1f, kTerrainMask))
         {
-            transform.position.Set(transform.position.x, castHit.point.y, 0);
+            Debug.DrawLine(transform.position, transform.position + (transform.up * -1 * kBoundBox.y * 0.5f), Color.red);
+            mIsGrounded = true;
         }
-        mIsGrounded = castHit.collider != null;
+        else
+        {
+            mIsGrounded = false;
+        }
         mCanJump = mIsGrounded;
     }
 
@@ -108,10 +108,12 @@ public class PlayerController : MonoBehaviour
         if (mInputAxes.sqrMagnitude != 0)
         {
             RaycastHit2D castHit = Physics2D.BoxCast(transform.position, kBoundBox * 0.5f, 0, mInputAxes, 0.2f);
-            Debug.DrawRay(transform.position, mInputAxes);
+            Debug.DrawRay(transform.position, mInputAxes, Color.green);
             if (castHit.collider == null)
             {
-                transform.Translate(mInputAxes.x * mSpeed * Time.deltaTime, 0.0f, 0.0f);
+                Vector3 newPos = transform.position;
+                newPos.Set(newPos.x + mInputAxes.x * mSpeed * Time.deltaTime, newPos.y, newPos.z);
+                GetComponent<Rigidbody>().MovePosition(newPos);
             }
             else
             {
@@ -121,7 +123,7 @@ public class PlayerController : MonoBehaviour
         if (mCanJump && mInputJumpPressed)
         {
             mCanJump = mIsGrounded = false;
-            mJumpVelocity = kJumpSpeed;
+            GetComponent<Rigidbody>().velocity = transform.up * kJumpSpeed;
         }
     }
 
