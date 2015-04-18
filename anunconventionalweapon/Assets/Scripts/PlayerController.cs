@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     private PlayerState mState = PlayerState.Idle;
 
     private GameObject mHook;
+    private HookController mHookController;
     private GameObject mMainCameraGO;
     private Camera mMainCamera;
 
@@ -41,6 +42,8 @@ public class PlayerController : MonoBehaviour
 
     private bool mLongJump;
 
+    private bool CanShoot { get { return mHookController != null && mHookController.IsAvailable; } }
+
     public float kJumpSpeed = 7f;
 
     public bool IsGrounded { get { return mIsGrounded; } }
@@ -53,8 +56,8 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            return string.Format("Is Grounded: {0}\nJumpTimer: {1}",
-                IsGrounded, mJumpTimer);
+            return string.Format("Is Grounded: {0}\nHookState: {1}\nCanShoot: {2}",
+                IsGrounded, (mHookController != null) ? mHookController.State : "off", CanShoot);
         }
     }
 
@@ -66,6 +69,7 @@ public class PlayerController : MonoBehaviour
         kTerrainMask = LayerMask.GetMask("Terrain");
         // Set up the hook
         mHook = GameObject.Find("Hook");
+        mHookController = mHook.GetComponent<HookController>();
         mHook.SetActive(false);
         // Set up the camera
         mMainCameraGO = GameObject.Find("Main Camera");
@@ -88,7 +92,7 @@ public class PlayerController : MonoBehaviour
                 break;
         }
         // Test for hook shoot
-        if (mInputHookShoot)
+        if (CanShoot && mInputHookShoot)
         {
             ShootHookAtMouse();
         }
@@ -96,11 +100,8 @@ public class PlayerController : MonoBehaviour
 
     private void ShootHookAtMouse()
     {
-        mHook.SetActive(true);
-        HookController hookController = mHook.GetComponent<HookController>();
-        hookController.Origin = transform.position;
-        hookController.Direction = Input.mousePosition - mMainCamera.WorldToScreenPoint(transform.position);
-        hookController.StartHooking();
+        mHookController.Direction = Input.mousePosition - mMainCamera.WorldToScreenPoint(transform.position);
+        mHookController.StartHooking();
     }
 
     private void CustomGravity()
@@ -128,7 +129,7 @@ public class PlayerController : MonoBehaviour
     {
         mInputAxes.x = Input.GetAxis("Horizontal");
         mInputJumpPressed = Input.GetButton("Jump");
-        mInputHookShoot = Input.GetMouseButton(0);
+        mInputHookShoot = Input.GetMouseButton(1);
     }
 
     #region State Ticks
