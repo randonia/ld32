@@ -6,7 +6,8 @@ public class EnemyController : MonoBehaviour
     private enum EnemyState
     {
         Roaming,
-        Hooked
+        Hooked,
+        Exploding
     }
 
     public enum PatrolMode
@@ -124,7 +125,7 @@ public class EnemyController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Terrain"))
+        if (mState != EnemyState.Exploding && collision.gameObject.CompareTag("Terrain"))
         {
             DoExplosion();
         }
@@ -132,6 +133,7 @@ public class EnemyController : MonoBehaviour
 
     private void DoExplosion()
     {
+        mState = EnemyState.Exploding;
         GameObject explosion = (GameObject)GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
         GameObject.Destroy(gameObject);
     }

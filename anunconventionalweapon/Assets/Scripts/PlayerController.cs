@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -52,6 +53,16 @@ public class PlayerController : MonoBehaviour
     private float mJumpTimer = float.MinValue;
     private const float kJumpDuration = 0.25f;
 
+    private int mAmmoCount;
+
+    public string AmmoCount { get { return mAmmoCount.ToString(); } }
+
+    private const int kMaxAmmoCount = 10;
+
+    public string AmmoWeight { get { return string.Format("{0}%", ((mAmmoCount / (float)kMaxAmmoCount) * 100f).ToString()); } }
+
+    private List<GameObject> mDebris;
+
     public string DebugString
     {
         get
@@ -64,6 +75,7 @@ public class PlayerController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        mDebris = new List<GameObject>();
         mInputAxes = Vector2.zero;
         kBoundBox = GetComponent<BoxCollider>().bounds.size;
         kTerrainMask = LayerMask.GetMask("Terrain");
@@ -138,6 +150,26 @@ public class PlayerController : MonoBehaviour
         {
             // Consume enemy
         }
+        if (collision.gameObject.CompareTag("Debris"))
+        {
+            if (CanPickUpAmmo())
+            {
+                PickUpAmmo(collision.gameObject);
+            }
+        }
+    }
+
+    private void PickUpAmmo(GameObject gameObject)
+    {
+        mDebris.Add(gameObject);
+        gameObject.SetActive(false);
+        mAmmoCount++;
+    }
+
+    private bool CanPickUpAmmo()
+    {
+        // Only one requirement for now
+        return mAmmoCount < kMaxAmmoCount;
     }
 
     #region State Ticks
