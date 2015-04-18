@@ -22,7 +22,7 @@ public class PlayerController : MonoBehaviour
     #endregion Input member variables
 
     private Vector3 kBoundBox;
-    public float mSpeed = 2.0f;
+    private float mSpeed = 4.0f;
 
     /// <summary>
     /// Set at the beginning of update
@@ -34,18 +34,22 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool mCanJump;
 
-    public float kJumpSpeed = 5f;
+    private bool mLongJump;
+
+    public float kJumpSpeed = 7f;
 
     public bool IsGrounded { get { return mIsGrounded; } }
 
     private int kTerrainMask;
+    private float mJumpTimer = float.MinValue;
+    private const float kJumpDuration = 0.25f;
 
     public string DebugString
     {
         get
         {
-            return string.Format("Is Grounded: {0}\nInput: {1}\nJumpPressed: {2}\nCanJump: {3}",
-                IsGrounded, mInputAxes, mInputJumpPressed, mCanJump);
+            return string.Format("Is Grounded: {0}\nJumpTimer: {1}",
+                IsGrounded, mJumpTimer);
         }
     }
 
@@ -60,6 +64,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CustomGravity();
         GetGroundStatus();
         GetInput();
         switch (mState)
@@ -71,6 +76,13 @@ public class PlayerController : MonoBehaviour
                 TickMoving();
                 break;
         }
+    }
+
+    private void CustomGravity()
+    {
+        Rigidbody body = GetComponent<Rigidbody>();
+        bool gravityFall = Time.time > mJumpTimer + (kJumpDuration * ((mInputJumpPressed) ? 2 : 1));
+        body.velocity = transform.up * kJumpSpeed * ((gravityFall) ? -1 : 1);
     }
 
     private void GetGroundStatus()
@@ -124,6 +136,7 @@ public class PlayerController : MonoBehaviour
         {
             mCanJump = mIsGrounded = false;
             GetComponent<Rigidbody>().velocity = transform.up * kJumpSpeed;
+            mJumpTimer = Time.time;
         }
     }
 

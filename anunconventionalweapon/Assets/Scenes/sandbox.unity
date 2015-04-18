@@ -358,11 +358,7 @@ MonoBehaviour:
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
   mText: 'Is Grounded: False
 
-    Input: (0.0, 0.0)
-
-    JumpPressed: False
-
-    CanJump: False'
+    JumpTimer: -3.402823E+38'
   mFontSize: 16
   mFontStyle: 0
   mAlignment: 1
@@ -864,8 +860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a8c4e31318d8f4293c72b4ca747216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mSpeed: 2
-  kJumpSpeed: 10
+  kJumpSpeed: 6
 --- !u!1 &2132411627
 GameObject:
   m_ObjectHideFlags: 0
