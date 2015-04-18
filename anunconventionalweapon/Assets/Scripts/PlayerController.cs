@@ -14,10 +14,15 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private PlayerState mState = PlayerState.Idle;
 
+    private GameObject mHook;
+    private GameObject mMainCameraGO;
+    private Camera mMainCamera;
+
     #region Input member variables
 
     private Vector2 mInputAxes;
     private bool mInputJumpPressed;
+    private bool mInputHookShoot;
 
     #endregion Input member variables
 
@@ -59,6 +64,12 @@ public class PlayerController : MonoBehaviour
         mInputAxes = Vector2.zero;
         kBoundBox = GetComponent<BoxCollider>().bounds.size;
         kTerrainMask = LayerMask.GetMask("Terrain");
+        // Set up the hook
+        mHook = GameObject.Find("Hook");
+        mHook.SetActive(false);
+        // Set up the camera
+        mMainCameraGO = GameObject.Find("Main Camera");
+        mMainCamera = mMainCameraGO.GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -76,6 +87,20 @@ public class PlayerController : MonoBehaviour
                 TickMoving();
                 break;
         }
+        // Test for hook shoot
+        if (mInputHookShoot)
+        {
+            ShootHookAtMouse();
+        }
+    }
+
+    private void ShootHookAtMouse()
+    {
+        mHook.SetActive(true);
+        HookController hookController = mHook.GetComponent<HookController>();
+        hookController.Origin = transform.position;
+        hookController.Direction = Input.mousePosition - mMainCamera.WorldToScreenPoint(transform.position);
+        hookController.StartHooking();
     }
 
     private void CustomGravity()
@@ -103,6 +128,7 @@ public class PlayerController : MonoBehaviour
     {
         mInputAxes.x = Input.GetAxis("Horizontal");
         mInputJumpPressed = Input.GetButton("Jump");
+        mInputHookShoot = Input.GetMouseButton(0);
     }
 
     #region State Ticks
