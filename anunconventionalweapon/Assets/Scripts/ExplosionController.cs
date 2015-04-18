@@ -30,5 +30,9 @@ public class ExplosionController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GetComponent<ParticleSystem>().isStopped)
+        {
+            GameObject.Destroy(gameObject);
+        }
     }
 }

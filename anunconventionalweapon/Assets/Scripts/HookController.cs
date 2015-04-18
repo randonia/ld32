@@ -28,6 +28,8 @@ public class HookController : MonoBehaviour
 
     private const float kSpeed = 15f;
 
+    private GameObject mLatchedTarget;
+
     private const float kMaxLength = 5;
     private readonly float kMaxLengthSqr = Mathf.Pow(kMaxLength, 2);
 
@@ -94,6 +96,21 @@ public class HookController : MonoBehaviour
     private void TickAttached()
     {
         // Bring down the target!
+        if (mLatchedTarget != null)
+        {
+            transform.position = mLatchedTarget.transform.position;
+            // Move the line renderer
+            mLineRenderer.SetPosition(0, Origin + transform.forward);
+            mLineRenderer.SetPosition(1, transform.position + transform.forward);
+            // Update the rotation
+            mRendererObject.transform.rotation = Quaternion.identity;
+            Vector3 facingAngle = (mLatchedTarget.transform.position - Origin).normalized;
+            mRendererObject.transform.Rotate(transform.forward, RAD2DEG * Mathf.Atan2(facingAngle.y, facingAngle.x) - 90);
+        }
+        else
+        {
+            StopHooking();
+        }
     }
 
     private void TickIdle()
@@ -116,10 +133,17 @@ public class HookController : MonoBehaviour
         {
             // Hook the enemy
             other.gameObject.GetComponent<EnemyController>().GetHooked();
+            LatchOn(other.gameObject);
         }
         if (other.gameObject.CompareTag("Terrain"))
         {
             StopHooking();
         }
+    }
+
+    private void LatchOn(GameObject other)
+    {
+        mState = HookState.Attached;
+        mLatchedTarget = other;
     }
 }
