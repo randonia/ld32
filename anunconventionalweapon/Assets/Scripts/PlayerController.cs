@@ -15,8 +15,10 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private PlayerState mState = PlayerState.Idle;
 
+    public GameObject PREFAB_DEBRIS;
     private GameObject mHook;
     private HookController mHookController;
+    private GameObject mShotRenderer;
     private GameObject mMainCameraGO;
     private Camera mMainCamera;
 
@@ -26,9 +28,13 @@ public class PlayerController : MonoBehaviour
     private bool mInputJumpPressed;
     private bool mInputHookShoot;
 
+    private bool mInputShootDebris;
+    private bool mInputLastTickShootDebris;
+
     #endregion Input member variables
 
     private Vector3 kBoundBox;
+
     private float mSpeed = 4.0f;
 
     /// <summary>
@@ -43,7 +49,29 @@ public class PlayerController : MonoBehaviour
 
     private bool mLongJump;
 
-    private bool CanShoot { get { return mHookController != null && mHookController.IsAvailable; } }
+    /// <summary>
+    /// Rules for using hook:
+    /// <para>HookController not null</para>
+    /// <para>HookController reporting available HookController::IsAvailable</para>
+    /// </summary>
+    private bool CanUseHook { get { return mHookController != null && mHookController.IsAvailable; } }
+
+    /// <summary>
+    /// Rules for shooting debris:
+    /// <para>Hook not in use</para>
+    /// <para>Aren't currently in shoot state</para>
+    /// <para>Have Ammo</para>
+    /// </summary>
+    private bool CanShootDebris { get { return CanUseHook && !mInputLastTickShootDebris && mAmmoCount > 0; } }
+
+    private float mShootStartTimer = -1;
+    private const float kShootMaxTimer = 0.5f;
+    private Vector3 mShootDir;
+    private const float kMaxThrowForce = 10.0f;
+
+    public bool IsCurrentlyShooting { get { return mShootStartTimer != -1; } }
+
+    public float DebrisShotLength { get { return (IsCurrentlyShooting) ? (Time.time - mShootStartTimer) / kShootMaxTimer : -1; } }
 
     public float kJumpSpeed = 7f;
 
@@ -53,7 +81,8 @@ public class PlayerController : MonoBehaviour
     private float mJumpTimer = float.MinValue;
     private const float kJumpDuration = 0.25f;
 
-    private int mAmmoCount;
+    // FOR TESTING
+    private int mAmmoCount = 1;
 
     public string AmmoCount { get { return mAmmoCount.ToString(); } }
 
@@ -61,21 +90,21 @@ public class PlayerController : MonoBehaviour
 
     public string AmmoWeight { get { return string.Format("{0}%", ((mAmmoCount / (float)kMaxAmmoCount) * 100f).ToString()); } }
 
-    private List<GameObject> mDebris;
+    private Stack<GameObject> mDebris;
 
     public string DebugString
     {
         get
         {
-            return string.Format("Is Grounded: {0}\nHookState: {1}\nCanShoot: {2}",
-                IsGrounded, (mHookController != null) ? mHookController.State : "off", CanShoot);
+            return string.Format("DebrisShotLength: {0}\nCanShoot: {1}\nTime: {2}\nShotTimer: {3}",
+                DebrisShotLength, CanShootDebris, Time.time, (mShootStartTimer + kShootMaxTimer));
         }
     }
 
     // Use this for initialization
     void Start()
     {
-        mDebris = new List<GameObject>();
+        mDebris = new Stack<GameObject>();
         mInputAxes = Vector2.zero;
         kBoundBox = GetComponent<BoxCollider>().bounds.size;
         kTerrainMask = LayerMask.GetMask("Terrain");
@@ -86,6 +115,8 @@ public class PlayerController : MonoBehaviour
         // Set up the camera
         mMainCameraGO = GameObject.Find("Main Camera");
         mMainCamera = mMainCameraGO.GetComponent<Camera>();
+        // Get the shot renderer
+        mShotRenderer = GameObject.Find("playershotrenderer");
     }
 
     // Update is called once per frame
@@ -104,10 +135,60 @@ public class PlayerController : MonoBehaviour
                 break;
         }
         // Test for hook shoot
-        if (CanShoot && mInputHookShoot)
+        if (CanUseHook && mInputHookShoot)
         {
             ShootHookAtMouse();
         }
+        if (CanShootDebris && mInputShootDebris)
+        {
+            Debug.Log("Starting shoot");
+            StartShootDebris();
+        }
+        if (IsCurrentlyShooting && mInputLastTickShootDebris)
+        {
+            if (mInputShootDebris && Time.time < mShootStartTimer + kShootMaxTimer)
+            {
+                TickShootDebris();
+            }
+            else if (!mInputShootDebris || Time.time > mShootStartTimer + kShootMaxTimer)
+            {
+                Debug.Log("Finished shooting" + mInputShootDebris + "," + (Time.time > mShootStartTimer + kShootMaxTimer));
+                FinishShootingDebris();
+            }
+        }
+    }
+
+    private void TickShootDebris()
+    {
+        mShootDir = (Input.mousePosition - mMainCamera.WorldToScreenPoint(transform.position)).normalized;
+        mShotRenderer.transform.rotation = Quaternion.identity;
+        mShotRenderer.transform.Rotate(transform.forward, Mathf.Atan2(mShootDir.y, mShootDir.x) * HookController.RAD2DEG - 90);
+    }
+
+    private void FinishShootingDebris()
+    {
+        float shootVal = DebrisShotLength;
+        GameObject newDebris;
+        // Error check to make sure something didn't go wrong and to support testing
+        if (mDebris.Count == 0)
+        {
+            newDebris = (GameObject)GameObject.Instantiate(PREFAB_DEBRIS);
+        }
+        else
+        {
+            newDebris = mDebris.Pop();
+        }
+        newDebris.transform.position = mShotRenderer.transform.position;
+        newDebris.GetComponent<Rigidbody>().velocity = mShootDir * kMaxThrowForce * shootVal;
+        newDebris.GetComponent<DebrisController>().StartThrow();
+        // Assumes only one collider
+        Physics.IgnoreCollision(GetComponent<Collider>(), newDebris.GetComponent<Collider>());
+        mShootStartTimer = -1;
+    }
+
+    private void StartShootDebris()
+    {
+        mShootStartTimer = Time.time;
     }
 
     private void ShootHookAtMouse()
@@ -141,7 +222,9 @@ public class PlayerController : MonoBehaviour
     {
         mInputAxes.x = Input.GetAxis("Horizontal");
         mInputJumpPressed = Input.GetButton("Jump");
-        mInputHookShoot = Input.GetMouseButton(1);
+        mInputHookShoot = Input.GetMouseButtonDown(1);
+        mInputLastTickShootDebris = mInputShootDebris;
+        mInputShootDebris = Input.GetMouseButton(0);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -161,7 +244,7 @@ public class PlayerController : MonoBehaviour
 
     private void PickUpAmmo(GameObject gameObject)
     {
-        mDebris.Add(gameObject);
+        mDebris.Push(gameObject);
         gameObject.SetActive(false);
         mAmmoCount++;
     }

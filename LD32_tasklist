@@ -1,12 +1,13 @@
 LD32 Feature Tasks
 ==================
-+ Enemy consumption
-+ Hook physics
-+ Main game loop
++ Enemy reaction to debris
++ Death
++ Main game loop Start -> Win/Lose -> Restart
 + Goal Scenario
-+ Write HOWTO
 + More terrain types
++ Clean up horizontal movement
 + UI
++ Write HOWTO
 
 LD32 Cleanup Tasks
 ==================

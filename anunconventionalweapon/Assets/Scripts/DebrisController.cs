@@ -10,11 +10,12 @@ public class DebrisController : MonoBehaviour
         Thrown
     }
 
-    private DebrisState mState;
+    private DebrisState mState = DebrisState.Idle;
 
     public Sprite[] DebrisSprites;
 
     private const float kLifeSpan = 5.0f;
+    private const float kThrownLifeSpan = 20.0f;
     private float mStartTime;
 
     // Use this for initialization
@@ -22,12 +23,20 @@ public class DebrisController : MonoBehaviour
     {
         GetComponent<SpriteRenderer>().sprite = GetRandomSprite();
         mStartTime = Time.time;
-        mState = DebrisState.Idle;
     }
 
     private Sprite GetRandomSprite()
     {
         return DebrisSprites[Random.Range(0, DebrisSprites.Length - 1)];
+    }
+
+    /// <summary>
+    /// Once a debris is thrown, it no longer can be used by the player!
+    /// </summary>
+    public void StartThrow()
+    {
+        mState = DebrisState.Thrown;
+        mStartTime = Time.time;
     }
 
     // Update is called once per frame
@@ -57,11 +66,20 @@ public class DebrisController : MonoBehaviour
 
     private void TickCarried()
     {
-        throw new System.NotImplementedException();
+        // Nothing really, deactivated
     }
+
+    // These really should be taken out
+    private static Color[] DEBUGCOLORS = { Color.red, Color.green, Color.black, Color.blue, Color.white, Color.yellow, Color.magenta, Color.cyan };
+
+    private Color myColor = DEBUGCOLORS[Random.Range(0, DEBUGCOLORS.Length - 1)];
 
     private void TickThrown()
     {
-        throw new System.NotImplementedException();
+        if (Time.time > mStartTime + kThrownLifeSpan)
+        {
+            GameObject.Destroy(gameObject);
+        }
+        Debug.DrawLine(transform.position, transform.position + Vector3.forward, myColor, kThrownLifeSpan);
     }
 }

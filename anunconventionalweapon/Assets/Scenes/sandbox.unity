@@ -425,7 +425,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 140692395}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -163, y: 311, z: 0}
+  m_LocalPosition: {x: -171, y: 311, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 590247935}
@@ -692,11 +692,13 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: 'Is Grounded: False
+  mText: 'DebrisShotLength: -1
 
-    HookState: off
+    CanShoot: False
 
-    CanShoot: False'
+    Time: 0
+
+    ShotTimer: -0.5'
   mFontSize: 16
   mFontStyle: 0
   mAlignment: 1
@@ -868,7 +870,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: 0%
+  mText: 10%
   mFontSize: 16
   mFontStyle: 0
   mAlignment: 1
@@ -1114,6 +1116,104 @@ Transform:
   - {fileID: 1498009323}
   m_Father: {fileID: 0}
   m_RootOrder: 8
+--- !u!1 &1238763249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1238763250}
+  - 120: {fileID: 1238763252}
+  - 114: {fileID: 1238763251}
+  - 114: {fileID: 1238763253}
+  m_Layer: 0
+  m_Name: playershotrenderer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1238763250
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1238763249}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: .298000008, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1637204451}
+  m_RootOrder: 1
+--- !u!114 &1238763251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1238763249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 600e95ef5c749a64f8a28be8caecb00b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!120 &1238763252
+LineRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1238763249}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_Materials:
+  - {fileID: 2100000, guid: eef31b99ea1a85c48a48c7075bee9cc5, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_Positions:
+  - {x: 0, y: 1, z: 1}
+  - {x: 0, y: 2, z: 1}
+  m_Parameters:
+    startWidth: .5
+    endWidth: .5
+    m_StartColor:
+      serializedVersion: 2
+      rgba: 4294967295
+    m_EndColor:
+      serializedVersion: 2
+      rgba: 65500
+  m_UseWorldSpace: 1
+--- !u!114 &1238763253
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1238763249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501d3db605fb18e43bfa0d782ccf1586, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  source:
+    mTarget: {fileID: 1637204454}
+    mName: DebrisShotLength
+  target:
+    mTarget: {fileID: 1238763251}
+    mName: ShotAmount
+  direction: 0
+  update: 1
+  editMode: 1
 --- !u!1 &1273513499
 GameObject:
   m_ObjectHideFlags: 0
@@ -1173,7 +1273,7 @@ Camera:
   near clip plane: .300000012
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 4
   m_Depth: -1
   m_CullingMask:
@@ -1193,7 +1293,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1273513499}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 0, z: -12.1899996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1432,7 +1532,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1498009322}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -172, y: -357, z: 0}
+  m_LocalPosition: {x: -180, y: -357, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 100657021}
@@ -1546,7 +1646,7 @@ MonoBehaviour:
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: 0
+  mText: 1
   mFontSize: 16
   mFontStyle: 0
   mAlignment: 1
@@ -1620,6 +1720,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 285986731}
+  - {fileID: 1238763250}
   m_Father: {fileID: 0}
   m_RootOrder: 7
 --- !u!65 &1637204452
@@ -1660,6 +1761,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a8c4e31318d8f4293c72b4ca747216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PREFAB_DEBRIS: {fileID: 151214, guid: b09b219f05aa45d41a45ab7cbc39b042, type: 2}
   kJumpSpeed: 6
 --- !u!1 &1822419655
 GameObject:
