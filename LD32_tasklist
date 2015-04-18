@@ -1,0 +1,14 @@
+LD32 Feature Tasks
+==================
++ Main game loop
++ Enemy consumption
++ Hook physics
++ Goal Scenario
++ Write HOWTO
++ More terrain types
++ UI
+
+LD32 Cleanup Tasks
+==================
++ Vine renderer cleanup
++ Double jumping
