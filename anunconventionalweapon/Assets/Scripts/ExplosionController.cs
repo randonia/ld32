@@ -1,0 +1,34 @@
+﻿using System.Collections;
+using UnityEngine;
+
+public class ExplosionController : MonoBehaviour
+{
+    public GameObject PREFAB_DEBRIS;
+
+    private const float kRandXRange = 2f;
+    private const float kRandYRange = 5f;
+
+    // Use this for initialization
+    void Start()
+    {
+        // Create some debris
+        int countToCreate = Random.Range(3, 5);
+        for (int i = 0; i < countToCreate; ++i)
+        {
+            Quaternion randRot = Quaternion.identity;
+            randRot.z = Random.Range(0f, 180f);
+            GameObject debris = (GameObject)GameObject.Instantiate(PREFAB_DEBRIS, transform.position, randRot);
+            debris.GetComponent<Rigidbody>().velocity = RandomExplosionVector();
+        }
+    }
+
+    private Vector3 RandomExplosionVector()
+    {
+        return new Vector3(Random.value * kRandXRange - kRandXRange * 0.5f, Random.value * kRandYRange, 0.0f);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+    }
+}

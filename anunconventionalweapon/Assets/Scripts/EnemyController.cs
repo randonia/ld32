@@ -27,6 +27,7 @@ public class EnemyController : MonoBehaviour
         Right
     }
 
+    public GameObject PREFAB_EXPLOSION;
     private EnemyState mState;
     public PatrolMode mPatrolMode;
     private RenderDirection mRenderDirection;
@@ -119,6 +120,20 @@ public class EnemyController : MonoBehaviour
         body.useGravity = true;
         body.isKinematic = false;
         body.mass = 10;
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Terrain"))
+        {
+            DoExplosion();
+        }
+    }
+
+    private void DoExplosion()
+    {
+        GameObject explosion = (GameObject)GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
+        GameObject.Destroy(gameObject);
     }
 
     void OnDrawGizmos()

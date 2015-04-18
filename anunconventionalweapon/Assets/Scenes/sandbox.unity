@@ -294,7 +294,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 16
+  m_Constraints: 48
   m_CollisionDetection: 0
 --- !u!65 &129469217
 BoxCollider:
@@ -319,6 +319,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0440120c9a066f042a730a6517ee860b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PREFAB_EXPLOSION: {fileID: 179392, guid: fa20f0b26d2345d498507524f5b9a99a, type: 2}
   mPatrolMode: 0
   PatrolPoints:
   - {x: 1.25263858, y: 3.45829868, z: 0}

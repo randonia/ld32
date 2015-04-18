@@ -132,6 +132,14 @@ public class PlayerController : MonoBehaviour
         mInputHookShoot = Input.GetMouseButton(1);
     }
 
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Consume enemy
+        }
+    }
+
     #region State Ticks
 
     private void TickIdle()
