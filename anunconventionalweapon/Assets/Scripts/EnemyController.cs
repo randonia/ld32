@@ -35,7 +35,7 @@ public class EnemyController : MonoBehaviour
     private int mCurrPatrolNode;
     private PatrolDir mPatrolOscillateDir = PatrolDir.Forward;
     private const float kNodeThreshold = 0.5f;
-    private const float kSpeed = 0.5f;
+    private const float kSpeed = 1f;
 
     private Vector3 CurrPatrolDestination
     {

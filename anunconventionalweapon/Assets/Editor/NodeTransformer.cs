@@ -14,7 +14,7 @@ public class NodeTransformer : Editor
             for (int i = 0; i < enemyController.PatrolPoints.Length; ++i)
             {
                 Vector3 currPoint = enemyController.PatrolPoints[i];
-                enemyController.PatrolPoints[i] = Handles.PositionHandle(currPoint, gameObject.transform.rotation);
+                enemyController.PatrolPoints[i] = Handles.PositionHandle(currPoint, Quaternion.identity);
                 Handles.color = Color.white;
                 Handles.Label(currPoint, string.Format("{0}:path[{1}]", gameObject.name, i));
             }
