@@ -110,7 +110,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 140692395}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -302, y: 358, z: 0}
+  m_LocalPosition: {x: -252, y: 311, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 590247935}
@@ -130,29 +130,29 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 1216285824}
     relative: 0
-    absolute: 0
+    absolute: 10
   rightAnchor:
     target: {fileID: 1216285824}
     relative: 0
-    absolute: 170
+    absolute: 260
   bottomAnchor:
     target: {fileID: 1216285824}
     relative: 1
-    absolute: -50
+    absolute: -134
   topAnchor:
     target: {fileID: 1216285824}
     relative: 1
-    absolute: 0
+    absolute: -10
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 170
-  mHeight: 50
+  mWidth: 250
+  mHeight: 124
   mDepth: 0
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 3.4000001
+  aspectRatio: 2.01612902
 --- !u!1 &285986729
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,7 +406,7 @@ MonoBehaviour:
   leftAnchor:
     target: {fileID: 140692396}
     relative: 0
-    absolute: 6
+    absolute: 0
   rightAnchor:
     target: {fileID: 140692396}
     relative: 1
@@ -422,17 +422,27 @@ MonoBehaviour:
   updateAnchors: 1
   mColor: {r: 1, g: 1, b: 1, a: 1}
   mPivot: 4
-  mWidth: 164
-  mHeight: 50
+  mWidth: 250
+  mHeight: 124
   mDepth: 1
   autoResizeBoxCollider: 0
   hideIfOffScreen: 0
   keepAspectRatio: 0
-  aspectRatio: 3.27999997
+  aspectRatio: 2.01612902
   keepCrispWhenShrunk: 1
   mTrueTypeFont: {fileID: 0}
   mFont: {fileID: 11400000, guid: 29056518aafb01b49a5b08faf8e30cff, type: 2}
-  mText: (0.0, 0.0),0
+  mText: 'Is Grounded: False
+
+    Input: (0.0, 0.0)
+
+    jumpVelocity: 0
+
+    JumpPressed: False
+
+    CanJump: False
+
+    JumpProbe: 0'
   mFontSize: 16
   mFontStyle: 0
   mAlignment: 1
@@ -464,7 +474,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 590247933}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 140692396}
@@ -482,7 +492,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   source:
     mTarget: {fileID: 1637204454}
-    mName: InputAxes
+    mName: DebugString
   target:
     mTarget: {fileID: 590247934}
     mName: text
@@ -962,7 +972,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1637204450}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: .5, z: 0}
+  m_LocalPosition: {x: 0, y: .451000005, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 285986731}
@@ -978,7 +988,7 @@ BoxCollider2D:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_UsedByEffector: 0
-  m_Offset: {x: -4.47034836e-08, y: -.0518032312}
+  m_Offset: {x: 0, y: -.0518032312}
   serializedVersion: 2
   m_Size: {x: .469779164, y: .798881769}
 --- !u!50 &1637204453
@@ -993,9 +1003,9 @@ Rigidbody2D:
   m_GravityScale: 0
   m_FixedAngle: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &1637204454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1007,6 +1017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94a8c4e31318d8f4293c72b4ca747216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mSpeed: 2
+  kJumpSpeed: 10
 --- !u!1 &1665198073
 GameObject:
   m_ObjectHideFlags: 0
