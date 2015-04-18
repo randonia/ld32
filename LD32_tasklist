@@ -1,8 +1,8 @@
 LD32 Feature Tasks
 ==================
-+ Main game loop
 + Enemy consumption
 + Hook physics
++ Main game loop
 + Goal Scenario
 + Write HOWTO
 + More terrain types

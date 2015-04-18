@@ -115,6 +115,7 @@ public class HookController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             // Hook the enemy
+            other.gameObject.GetComponent<EnemyController>().GetHooked();
         }
         if (other.gameObject.CompareTag("Terrain"))
         {
