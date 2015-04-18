@@ -19,3 +19,13 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+
+
+# Custom gitignores
+*.db
+*.psd
+*.dll
+# Ignore NGUI for copyrights
+*NGUI*
+*.apk
+web_release
