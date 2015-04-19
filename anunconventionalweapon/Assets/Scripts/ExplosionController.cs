@@ -15,7 +15,6 @@ public class ExplosionController : MonoBehaviour
         mAudioExplosion = GetComponent<AudioSource>();
         if (mAudioExplosion != null)
         {
-            Debug.Log("Playing explosion");
             mAudioExplosion.Play();
         }
     }
