@@ -119,6 +119,8 @@ public class PlayerController : MonoBehaviour
 
     private float GetFacingRotation { get { return mFacingDirection.Equals(Direction.Left) ? 180f : 0; } }
 
+    private AudioSource mAudioJump;
+
     public Color AmmoWeightUIColor
     {
         get
@@ -180,6 +182,7 @@ public class PlayerController : MonoBehaviour
                 mPlayerWalkRenderer = child.gameObject;
             }
         }
+        mAudioJump = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -408,6 +411,7 @@ public class PlayerController : MonoBehaviour
             mCanJump = mIsGrounded = false;
             GetComponent<Rigidbody>().velocity = transform.up * kJumpSpeed;
             mJumpTimer = Time.time;
+            mAudioJump.Play();
         }
     }
 
