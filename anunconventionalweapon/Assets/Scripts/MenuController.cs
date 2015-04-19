@@ -23,7 +23,8 @@ public class MenuController : MonoBehaviour
     private string[] mDeathHints = {
                                        "Some enemies can't be killed by hooks",
                                        "Try a somersault!",
-                                       "You can only carry a certain number of debris, try to line up your shots",
+                                       "You can only carry a certain number of antacids, try to line up your shots",
+                                       "Even if you hook a bird, it can still poop on you on the way down",
                                        ""
                                    };
 
@@ -49,6 +50,7 @@ public class MenuController : MonoBehaviour
 
     public void RestartGame()
     {
+        Application.LoadLevel("sandbox");
     }
 
     void OnUpdateMenuDeathAlpha(float value)
