@@ -117,7 +117,7 @@ public class EnemyController : MonoBehaviour
 
     #endregion Tick methods
 
-    public void GetHooked()
+    public bool GetHooked()
     {
         if (mHookable)
         {
@@ -131,6 +131,7 @@ public class EnemyController : MonoBehaviour
         {
             // Do nothing? Get stunned?
         }
+        return mHookable;
     }
 
     void OnCollisionEnter(Collision collision)

@@ -41,6 +41,16 @@ public class PlayerController : MonoBehaviour
     private float mSpeed = 5.0f;
     private const float kSprintMultiplier = 1.5f;
 
+    // Can only sprint if <=30%
+    private const float kSprintWeightThreshold = 0.3f;
+
+    private const float kWalkWeightHighThreshold = 0.8f;
+    private const float kWalkWeightHighMultiplier = 0.3f;
+    private const float kWalkWeightMedThreshold = 0.4f;
+    private const float kWalkWeightMedMultiplier = 0.6f;
+    private const float kWalkWeightLowThreshold = 0.25f;
+    private const float kWalkWeightLowMultiplier = 1f;
+
     /// <summary>
     /// Set at the beginning of update
     /// </summary>
@@ -77,7 +87,9 @@ public class PlayerController : MonoBehaviour
 
     public float DebrisShotLength { get { return (IsCurrentlyShooting) ? (Time.time - mShootStartTimer) / kShootMaxTimer : -1; } }
 
-    public float kJumpSpeed = 7f;
+    private const float kJumpSpeed = 7f;
+
+    public float JumpSpeed { get { return kJumpSpeed * RunWeightMultiplier; } }
 
     public bool IsGrounded { get { return mIsGrounded; } }
 
@@ -92,7 +104,31 @@ public class PlayerController : MonoBehaviour
 
     private const int kMaxAmmoCount = 10;
 
-    public string AmmoWeight { get { return string.Format("{0}%", ((mAmmoCount / (float)kMaxAmmoCount) * 100f).ToString()); } }
+    private float AmmoWeightFloat { get { return (mAmmoCount / (float)kMaxAmmoCount); } }
+
+    public string AmmoWeight { get { return string.Format("{0}%", (AmmoWeightFloat * 100f).ToString()); } }
+
+    public Color AmmoWeightUIColor
+    {
+        get
+        {
+            float weight = AmmoWeightFloat;
+
+            if (weight >= kWalkWeightHighThreshold)
+            {
+                return Color.red;
+            }
+            if (weight >= kWalkWeightMedThreshold)
+            {
+                return Color.yellow;
+            }
+            return Color.white;
+        }
+    }
+
+    private bool IsSprinting { get { return mInputSprintPressed && AmmoWeightFloat <= kSprintWeightThreshold; } }
+
+    private float RunWeightMultiplier { get { return (AmmoWeightFloat >= kWalkWeightHighThreshold) ? kWalkWeightHighMultiplier : (AmmoWeightFloat >= kWalkWeightMedThreshold) ? kWalkWeightMedMultiplier : kWalkWeightLowMultiplier; } }
 
     private Stack<GameObject> mDebris;
 
@@ -217,7 +253,7 @@ public class PlayerController : MonoBehaviour
     {
         Rigidbody body = GetComponent<Rigidbody>();
         bool gravityFall = Time.time > mJumpTimer + (kJumpDuration * ((mInputJumpPressed) ? 2 : 1));
-        body.velocity = transform.up * kJumpSpeed * ((gravityFall) ? -1 : 1);
+        body.velocity = transform.up * JumpSpeed * ((gravityFall) ? -1 : 1);
     }
 
     private void GetGroundStatus()
@@ -314,7 +350,7 @@ public class PlayerController : MonoBehaviour
                 kTerrainMask))
             {
                 Vector3 newPos = transform.position;
-                newPos.Set(newPos.x + mInputAxes.x * mSpeed * ((mInputSprintPressed) ? kSprintMultiplier : 1) * Time.deltaTime, newPos.y, newPos.z);
+                newPos.Set(newPos.x + mInputAxes.x * mSpeed * ((IsSprinting) ? kSprintMultiplier : 1) * Time.deltaTime, newPos.y, newPos.z);
                 GetComponent<Rigidbody>().MovePosition(newPos);
             }
             else

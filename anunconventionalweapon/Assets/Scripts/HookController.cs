@@ -131,8 +131,10 @@ public class HookController : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy"))
         {
             // Hook the enemy
-            other.gameObject.GetComponent<EnemyController>().GetHooked();
-            LatchOn(other.gameObject);
+            if (other.gameObject.GetComponent<EnemyController>().GetHooked())
+            {
+                LatchOn(other.gameObject);
+            }
         }
         if (other.gameObject.CompareTag("Terrain"))
         {
