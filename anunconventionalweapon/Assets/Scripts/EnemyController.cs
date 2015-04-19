@@ -150,8 +150,7 @@ public class EnemyController : MonoBehaviour
     private void DoNonDebrisCreationExplosion()
     {
         mState = EnemyState.Exploding;
-        GameObject explosion = (GameObject)GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
-
+        GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
         GameObject.Destroy(gameObject);
     }
 
