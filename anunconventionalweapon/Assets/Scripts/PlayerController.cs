@@ -307,9 +307,12 @@ public class PlayerController : MonoBehaviour
 
     private void TickMoving()
     {
+        Vector3 topOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * kBoundBox.y * 0.25f;
+        Vector3 bottomOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * -kBoundBox.y * 0.25f;
+        Debug.DrawLine(topOfCapsule, bottomOfCapsule, Color.red);
         if (mInputAxes.sqrMagnitude != 0)
         {
-            if (!Physics.CheckSphere(transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.1f), kBoundBox.y * 0.5f,
+            if (!Physics.CheckCapsule(topOfCapsule, bottomOfCapsule, kBoundBox.y * 0.25f,
                 kTerrainMask))
             {
                 Vector3 newPos = transform.position;
@@ -333,6 +336,10 @@ public class PlayerController : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Gizmos.DrawWireSphere(transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.1f), kBoundBox.y * 0.5f);
+        Vector3 topOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * kBoundBox.y * 0.25f;
+        Vector3 bottomOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * -kBoundBox.y * 0.25f;
+        Debug.DrawLine(topOfCapsule, bottomOfCapsule, Color.red);
+        Gizmos.DrawWireSphere(topOfCapsule, kBoundBox.y * 0.25f);
+        Gizmos.DrawWireSphere(bottomOfCapsule, kBoundBox.y * 0.25f);
     }
 }

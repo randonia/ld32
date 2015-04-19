@@ -39,7 +39,7 @@ public class EnemyController : MonoBehaviour
     public Vector3[] PatrolPoints;
     private int mCurrPatrolNode;
     private PatrolDir mPatrolOscillateDir = PatrolDir.Forward;
-    private const float kNodeThreshold = 0.5f;
+    public float kNodeThreshold = 0.5f;
     private const float kSpeed = 1f;
 
     private Vector3 CurrPatrolDestination
@@ -104,7 +104,7 @@ public class EnemyController : MonoBehaviour
                     else if (mPatrolOscillateDir == PatrolDir.Reverse && mCurrPatrolNode <= 0)
                     {
                         mPatrolOscillateDir = PatrolDir.Forward;
-                        mCurrPatrolNode = Mathf.Max(PatrolPoints.Length - 1, 0);
+                        mCurrPatrolNode = 0;
                     }
                     break;
             }
