@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
     private enum PlayerState
     {
         Idle,
-        Moving
+        Moving,
+        Dead
     }
 
     /// <summary>
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private PlayerState mState = PlayerState.Idle;
 
     public GameObject PREFAB_DEBRIS;
+    private GameObject mPlayerRenderer;
     private GameObject mHook;
     private HookController mHookController;
     private GameObject mShotRenderer;
@@ -119,6 +121,15 @@ public class PlayerController : MonoBehaviour
         mMainCamera = mMainCameraGO.GetComponent<Camera>();
         // Get the shot renderer
         mShotRenderer = GameObject.Find("playershotrenderer");
+        // Get the player's renderer
+        foreach (Transform child in transform)
+        {
+            if (child.name.Equals("renderer"))
+            {
+                mPlayerRenderer = child.gameObject;
+                break;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -136,24 +147,27 @@ public class PlayerController : MonoBehaviour
                 TickMoving();
                 break;
         }
-        // Test for hook shoot
-        if (CanUseHook && mInputHookShoot)
+        if (!mState.Equals(PlayerState.Dead))
         {
-            ShootHookAtMouse();
-        }
-        if (CanShootDebris && mInputShootDebris)
-        {
-            StartShootDebris();
-        }
-        if (IsCurrentlyShooting && mInputLastTickShootDebris)
-        {
-            if (mInputShootDebris && Time.time < mShootStartTimer + kShootMaxTimer)
+            // Test for hook shoot
+            if (CanUseHook && mInputHookShoot)
             {
-                TickShootDebris();
+                ShootHookAtMouse();
             }
-            else if (!mInputShootDebris || Time.time > mShootStartTimer + kShootMaxTimer)
+            if (CanShootDebris && mInputShootDebris)
             {
-                FinishShootingDebris();
+                StartShootDebris();
+            }
+            if (IsCurrentlyShooting && mInputLastTickShootDebris)
+            {
+                if (mInputShootDebris && Time.time < mShootStartTimer + kShootMaxTimer)
+                {
+                    TickShootDebris();
+                }
+                else if (!mInputShootDebris || Time.time > mShootStartTimer + kShootMaxTimer)
+                {
+                    FinishShootingDebris();
+                }
             }
         }
     }
@@ -185,6 +199,7 @@ public class PlayerController : MonoBehaviour
         // Assumes only one collider
         Physics.IgnoreCollision(GetComponent<Collider>(), newDebris.GetComponent<Collider>());
         mShootStartTimer = -1;
+        mAmmoCount--;
     }
 
     private void StartShootDebris()
@@ -242,6 +257,26 @@ public class PlayerController : MonoBehaviour
                 PickUpAmmo(collision.gameObject);
             }
         }
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            // Die
+            GameObject playerDeath = (GameObject)GameObject.Find("PlayerDeath");
+            playerDeath.transform.position = transform.position;
+            playerDeath.GetComponent<ParticleSystem>().Play();
+            FadeOut();
+        }
+    }
+
+    private void FadeOut()
+    {
+        mState = PlayerState.Dead;
+        gameObject.layer = LayerMask.NameToLayer("DepartingEffect");
+        iTween.FadeTo(mPlayerRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f, "oncomplete", "FadeDeathMenu"));
+    }
+
+    void FadeDeathMenu()
+    {
+        Debug.Log("Menu hit");
     }
 
     private void PickUpAmmo(GameObject gameObject)

@@ -1,6 +1,5 @@
 LD32 Feature Tasks
 ==================
-+ Enemy reaction to debris
 + Death
 + Main game loop Start -> Win/Lose -> Restart
 + Goal Scenario

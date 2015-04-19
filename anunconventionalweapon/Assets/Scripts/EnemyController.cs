@@ -135,7 +135,6 @@ public class EnemyController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Enemy collided with " + collision.gameObject.name);
         if (mState != EnemyState.Exploding && collision.gameObject.CompareTag("Terrain"))
         {
             DoImpactExplosion();
