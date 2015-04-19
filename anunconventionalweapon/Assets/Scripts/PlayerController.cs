@@ -7,14 +7,14 @@ public class PlayerController : MonoBehaviour
     private enum PlayerState
     {
         Idle,
-        Moving,
+        Playing,
         Dead
     }
 
     /// <summary>
     /// Player's state, defaults to Idle
     /// </summary>
-    private PlayerState mState = PlayerState.Idle;
+    private PlayerState mState = PlayerState.Playing;
 
     public GameObject PREFAB_DEBRIS;
     private GameObject mPlayerRenderer;
@@ -136,8 +136,8 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            return string.Format("BoundingBox: {0}",
-                kBoundBox.ToString());
+            return string.Format("State: {0}",
+                mState.ToString());
         }
     }
 
@@ -178,8 +178,9 @@ public class PlayerController : MonoBehaviour
         {
             case PlayerState.Idle:
                 TickIdle();
-                break;
-            case PlayerState.Moving:
+                // Don't do anything
+                return;
+            case PlayerState.Playing:
                 TickMoving();
                 break;
         }
@@ -316,6 +317,12 @@ public class PlayerController : MonoBehaviour
         GameObject.Find("MenuController").GetComponent<MenuController>().MenuTransition(MenuController.MenuState.Death);
     }
 
+    public void EndGame()
+    {
+        mState = PlayerState.Idle;
+        // Do a dance?
+    }
+
     private void PickUpAmmo(GameObject gameObject)
     {
         mDebris.Push(gameObject);
@@ -333,10 +340,6 @@ public class PlayerController : MonoBehaviour
 
     private void TickIdle()
     {
-        if (mInputAxes.sqrMagnitude != 0)
-        {
-            mState = PlayerState.Moving;
-        }
     }
 
     private void TickMoving()
