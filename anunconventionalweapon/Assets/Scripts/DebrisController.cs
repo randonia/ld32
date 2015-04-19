@@ -85,7 +85,7 @@ public class DebrisController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Terrain"))
+        if (collision.gameObject.CompareTag("Terrain") && mState.Equals(DebrisState.Thrown))
         {
             FadeOut();
         }

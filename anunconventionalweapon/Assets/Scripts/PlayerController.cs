@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 mInputAxes;
     private bool mInputJumpPressed;
+    private bool mInputSprintPressed;
     private bool mInputHookShoot;
 
     private bool mInputShootDebris;
@@ -35,7 +36,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 kBoundBox;
 
-    private float mSpeed = 4.0f;
+    private float mSpeed = 5.0f;
+    private const float kSprintMultiplier = 1.5f;
 
     /// <summary>
     /// Set at the beginning of update
@@ -141,7 +143,6 @@ public class PlayerController : MonoBehaviour
         }
         if (CanShootDebris && mInputShootDebris)
         {
-            Debug.Log("Starting shoot");
             StartShootDebris();
         }
         if (IsCurrentlyShooting && mInputLastTickShootDebris)
@@ -152,7 +153,6 @@ public class PlayerController : MonoBehaviour
             }
             else if (!mInputShootDebris || Time.time > mShootStartTimer + kShootMaxTimer)
             {
-                Debug.Log("Finished shooting" + mInputShootDebris + "," + (Time.time > mShootStartTimer + kShootMaxTimer));
                 FinishShootingDebris();
             }
         }
@@ -223,6 +223,7 @@ public class PlayerController : MonoBehaviour
     {
         mInputAxes.x = Input.GetAxis("Horizontal");
         mInputJumpPressed = Input.GetButton("Jump");
+        mInputSprintPressed = Input.GetButton("Sprint");
         mInputHookShoot = Input.GetMouseButtonDown(1);
         mInputLastTickShootDebris = mInputShootDebris;
         mInputShootDebris = Input.GetMouseButton(0);
@@ -275,7 +276,7 @@ public class PlayerController : MonoBehaviour
             if (castHit.collider == null)
             {
                 Vector3 newPos = transform.position;
-                newPos.Set(newPos.x + mInputAxes.x * mSpeed * Time.deltaTime, newPos.y, newPos.z);
+                newPos.Set(newPos.x + mInputAxes.x * mSpeed * ((mInputSprintPressed) ? kSprintMultiplier : 1) * Time.deltaTime, newPos.y, newPos.z);
                 GetComponent<Rigidbody>().MovePosition(newPos);
             }
             else
