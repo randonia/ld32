@@ -37,7 +37,7 @@ Additional Ammo is acquired by downing seagulls. You cannot get more ammo by hit
 [4]: http://onlinesequencer.net/
 [5]: https://obsproject.com/
 
-[20]: https://raw.githubusercontent.com/randonia/ld32/screenshots/screenshots/screenshot_idle.png
+[20]: https://raw.githubusercontent.com/randonia/ld32/screenshots/screenshots/gif_idle.gif
 [21]: https://raw.githubusercontent.com/randonia/ld32/screenshots/screenshots/screenshot_hooking2.png
 [22]: https://raw.githubusercontent.com/randonia/ld32/screenshots/screenshots/screenshot_hooking1.png
 [23]: https://raw.githubusercontent.com/randonia/ld32/screenshots/screenshots/screenshot_dead.png
