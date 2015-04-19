@@ -7,10 +7,17 @@ public class ExplosionController : MonoBehaviour
 
     private const float kRandXRange = 2f;
     private const float kRandYRange = 5f;
+    private AudioSource mAudioExplosion;
 
     // Use this for initialization
     void Start()
     {
+        mAudioExplosion = GetComponent<AudioSource>();
+        if (mAudioExplosion != null)
+        {
+            Debug.Log("Playing explosion");
+            mAudioExplosion.Play();
+        }
     }
 
     public void StartDebrisExplosion()

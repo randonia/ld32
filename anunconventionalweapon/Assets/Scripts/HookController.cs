@@ -34,6 +34,7 @@ public class HookController : MonoBehaviour
     private readonly float kMaxLengthSqr = Mathf.Pow(kMaxLength, 2);
 
     private LineRenderer mLineRenderer;
+    private AudioSource mLatchNoise;
 
     public bool IsAvailable { get { return mState.Equals(HookState.Ready); } }
 
@@ -50,7 +51,7 @@ public class HookController : MonoBehaviour
                 break;
             }
         }
-
+        mLatchNoise = GetComponent<AudioSource>();
         mLineRenderer = GetComponent<LineRenderer>();
     }
 
@@ -146,5 +147,9 @@ public class HookController : MonoBehaviour
     {
         mState = HookState.Attached;
         mLatchedTarget = other;
+        if (mLatchNoise != null)
+        {
+            mLatchNoise.Play();
+        }
     }
 }
