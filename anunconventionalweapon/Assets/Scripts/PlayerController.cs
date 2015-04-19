@@ -100,8 +100,8 @@ public class PlayerController : MonoBehaviour
     {
         get
         {
-            return string.Format("DebrisShotLength: {0}\nCanShoot: {1}\nTime: {2}\nShotTimer: {3}",
-                DebrisShotLength, CanShootDebris, Time.time, (mShootStartTimer + kShootMaxTimer));
+            return string.Format("BoundingBox: {0}",
+                kBoundBox.ToString());
         }
     }
 
@@ -309,9 +309,8 @@ public class PlayerController : MonoBehaviour
     {
         if (mInputAxes.sqrMagnitude != 0)
         {
-            RaycastHit2D castHit = Physics2D.BoxCast(transform.position, kBoundBox * 0.5f, 0, mInputAxes, 0.2f);
-            Debug.DrawRay(transform.position, mInputAxes, Color.green);
-            if (castHit.collider == null)
+            if (!Physics.CheckSphere(transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.1f), kBoundBox.y * 0.5f,
+                kTerrainMask))
             {
                 Vector3 newPos = transform.position;
                 newPos.Set(newPos.x + mInputAxes.x * mSpeed * ((mInputSprintPressed) ? kSprintMultiplier : 1) * Time.deltaTime, newPos.y, newPos.z);
@@ -331,4 +330,9 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion State Ticks
+
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.1f), kBoundBox.y * 0.5f);
+    }
 }
