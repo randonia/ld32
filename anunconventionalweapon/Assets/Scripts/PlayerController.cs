@@ -220,21 +220,21 @@ public class PlayerController : MonoBehaviour
                     FinishShootingDebris();
                 }
             }
-        }
-        // Render "logic"
-        if (mInputAxes.sqrMagnitude != 0)
-        {
-            mPlayerIdleRenderer.SetActive(false);
-            mPlayerWalkRenderer.SetActive(true);
-            mPlayerWalkRenderer.transform.rotation = Quaternion.identity;
-            mPlayerWalkRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
-        }
-        else
-        {
-            mPlayerWalkRenderer.SetActive(false);
-            mPlayerIdleRenderer.SetActive(true);
-            mPlayerIdleRenderer.transform.rotation = Quaternion.identity;
-            mPlayerIdleRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
+            // Render "logic"
+            if (mInputAxes.sqrMagnitude != 0)
+            {
+                mPlayerIdleRenderer.SetActive(false);
+                mPlayerWalkRenderer.SetActive(true);
+                mPlayerWalkRenderer.transform.rotation = Quaternion.identity;
+                mPlayerWalkRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
+            }
+            else
+            {
+                mPlayerWalkRenderer.SetActive(false);
+                mPlayerIdleRenderer.SetActive(true);
+                mPlayerIdleRenderer.transform.rotation = Quaternion.identity;
+                mPlayerIdleRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
+            }
         }
     }
 
@@ -337,10 +337,9 @@ public class PlayerController : MonoBehaviour
     {
         mState = PlayerState.Dead;
         gameObject.layer = LayerMask.NameToLayer("DepartingEffect");
-        iTween.FadeTo(mPlayerWalkRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
-            "oncomplete", "FadeDeathMenu", "oncompletetarget", gameObject));
-        iTween.FadeTo(mPlayerIdleRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
-            "oncomplete", "FadeDeathMenu"));
+        iTween.FadeTo(mPlayerWalkRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f));
+        iTween.FadeTo(mPlayerIdleRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f));
+        Invoke("FadeDeathMenu", 0.25f);
     }
 
     void FadeDeathMenu()
@@ -356,8 +355,12 @@ public class PlayerController : MonoBehaviour
 
     private void PickUpAmmo(GameObject gameObject)
     {
-        mDebris.Push(gameObject);
-        gameObject.SetActive(false);
+        if (gameObject != null)
+        {
+            mDebris.Push(gameObject);
+            gameObject.SetActive(false);
+            gameObject.GetComponent<DebrisController>().PickedUp();
+        }
         mAmmoCount++;
     }
 

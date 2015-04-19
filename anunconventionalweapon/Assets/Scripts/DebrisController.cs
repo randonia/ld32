@@ -12,6 +12,8 @@ public class DebrisController : MonoBehaviour
 
     private DebrisState mState = DebrisState.Idle;
 
+    public bool IsThrown { get { return mState.Equals(DebrisState.Thrown); } }
+
     public Sprite[] DebrisSprites;
 
     private const float kLifeSpan = 5.0f;
@@ -99,6 +101,14 @@ public class DebrisController : MonoBehaviour
 
     void DestroyObject()
     {
-        GameObject.Destroy(gameObject);
+        if (!mState.Equals(DebrisState.Carried))
+        {
+            GameObject.Destroy(gameObject);
+        }
+    }
+
+    internal void PickedUp()
+    {
+        mState = DebrisState.Carried;
     }
 }

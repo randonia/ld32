@@ -140,11 +140,18 @@ public class EnemyController : MonoBehaviour
         {
             DoImpactExplosion();
         }
-        if (collision.gameObject.CompareTag("Debris") && mDestroyedByDebrisOnly)
+        if (collision.gameObject.CompareTag("Debris"))
         {
             // Handle own explody logic
-            DoNonDebrisCreationExplosion();
-            collision.gameObject.GetComponent<DebrisController>().FadeOut();
+            if (mDestroyedByDebrisOnly && collision.gameObject.GetComponent<DebrisController>().IsThrown)
+            {
+                DoNonDebrisCreationExplosion();
+                collision.gameObject.GetComponent<DebrisController>().FadeOut();
+            }
+            else
+            {
+                DoImpactExplosion();
+            }
         }
     }
 
