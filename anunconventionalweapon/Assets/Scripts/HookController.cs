@@ -18,7 +18,7 @@ public class HookController : MonoBehaviour
 
     public string State { get { return mState.ToString(); } }
 
-    private readonly Vector3 kPlayerHookOffset = Vector3.up * 0.25f;
+    private readonly Vector3 kPlayerHookOffset = Vector3.up * 0.55f;
 
     public Vector3 Origin { get { return mPlayer.transform.position + kPlayerHookOffset; } }
 

@@ -11,13 +11,22 @@ public class PlayerController : MonoBehaviour
         Dead
     }
 
+    private enum Direction
+    {
+        Left,
+        Right
+    }
+
     /// <summary>
     /// Player's state, defaults to Idle
     /// </summary>
     private PlayerState mState = PlayerState.Playing;
 
+    private Direction mFacingDirection = Direction.Right;
+
     public GameObject PREFAB_DEBRIS;
-    private GameObject mPlayerRenderer;
+    private GameObject mPlayerWalkRenderer;
+    private GameObject mPlayerIdleRenderer;
     private GameObject mHook;
     private HookController mHookController;
     private GameObject mShotRenderer;
@@ -108,6 +117,8 @@ public class PlayerController : MonoBehaviour
 
     public string AmmoWeight { get { return string.Format("{0}%", (AmmoWeightFloat * 100f).ToString()); } }
 
+    private float GetFacingRotation { get { return mFacingDirection.Equals(Direction.Left) ? 180f : 0; } }
+
     public Color AmmoWeightUIColor
     {
         get
@@ -160,10 +171,13 @@ public class PlayerController : MonoBehaviour
         // Get the player's renderer
         foreach (Transform child in transform)
         {
-            if (child.name.Equals("renderer"))
+            if (child.name.Equals("renderer_idle"))
             {
-                mPlayerRenderer = child.gameObject;
-                break;
+                mPlayerIdleRenderer = child.gameObject;
+            }
+            if (child.name.Equals("renderer_walk"))
+            {
+                mPlayerWalkRenderer = child.gameObject;
             }
         }
     }
@@ -207,6 +221,21 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        // Render "logic"
+        if (mInputAxes.sqrMagnitude != 0)
+        {
+            mPlayerIdleRenderer.SetActive(false);
+            mPlayerWalkRenderer.SetActive(true);
+            mPlayerWalkRenderer.transform.rotation = Quaternion.identity;
+            mPlayerWalkRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
+        }
+        else
+        {
+            mPlayerWalkRenderer.SetActive(false);
+            mPlayerIdleRenderer.SetActive(true);
+            mPlayerIdleRenderer.transform.rotation = Quaternion.identity;
+            mPlayerIdleRenderer.transform.Rotate(Vector3.up, GetFacingRotation);
+        }
     }
 
     private void TickShootDebris()
@@ -246,7 +275,7 @@ public class PlayerController : MonoBehaviour
 
     private void ShootHookAtMouse()
     {
-        mHookController.Direction = Input.mousePosition - mMainCamera.WorldToScreenPoint(transform.position);
+        mHookController.Direction = Input.mousePosition - mMainCamera.WorldToScreenPoint(mShotRenderer.transform.position);
         mHookController.StartHooking();
     }
 
@@ -259,9 +288,9 @@ public class PlayerController : MonoBehaviour
 
     private void GetGroundStatus()
     {
-        if (Physics.CheckSphere(transform.position + (transform.up * -1 * kBoundBox.y * 0.5f), 0.1f, kTerrainMask))
+        if (Physics.CheckSphere(transform.position + (transform.up * -1 * kBoundBox.y * 0.25f), 0.1f, kTerrainMask))
         {
-            Debug.DrawLine(transform.position, transform.position + (transform.up * -1 * kBoundBox.y * 0.5f), Color.red);
+            Debug.DrawLine(transform.position, transform.position + (transform.up * -1 * kBoundBox.y * 0.25f), Color.red);
             mIsGrounded = true;
         }
         else
@@ -308,8 +337,10 @@ public class PlayerController : MonoBehaviour
     {
         mState = PlayerState.Dead;
         gameObject.layer = LayerMask.NameToLayer("DepartingEffect");
-        iTween.FadeTo(mPlayerRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
+        iTween.FadeTo(mPlayerWalkRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
             "oncomplete", "FadeDeathMenu", "oncompletetarget", gameObject));
+        iTween.FadeTo(mPlayerIdleRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
+            "oncomplete", "FadeDeathMenu"));
     }
 
     void FadeDeathMenu()
@@ -344,12 +375,20 @@ public class PlayerController : MonoBehaviour
 
     private void TickMoving()
     {
-        Vector3 topOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * kBoundBox.y * 0.25f;
-        Vector3 bottomOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * -kBoundBox.y * 0.25f;
+        Vector3 topOfCapsule = transform.position + ((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f + Vector3.up * kBoundBox.y * 0.5f;
+        Vector3 bottomOfCapsule = transform.position + ((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f + Vector3.up * kBoundBox.y * -0.1f;
         Debug.DrawLine(topOfCapsule, bottomOfCapsule, Color.red);
         if (mInputAxes.sqrMagnitude != 0)
         {
-            if (!Physics.CheckCapsule(topOfCapsule, bottomOfCapsule, kBoundBox.y * 0.25f,
+            if (mInputAxes.x > 0)
+            {
+                mFacingDirection = Direction.Right;
+            }
+            else if (mInputAxes.x < 0)
+            {
+                mFacingDirection = Direction.Left;
+            }
+            if (!Physics.CheckCapsule(topOfCapsule, bottomOfCapsule, kBoundBox.x * 0.5f,
                 kTerrainMask))
             {
                 Vector3 newPos = transform.position;
@@ -373,10 +412,13 @@ public class PlayerController : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        Vector3 topOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * kBoundBox.y * 0.25f;
-        Vector3 bottomOfCapsule = transform.position + (((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f) + Vector3.up * -kBoundBox.y * 0.25f;
+        Vector3 topOfCapsule = transform.position + ((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f + Vector3.up * kBoundBox.y * 0.5f;
+        Vector3 bottomOfCapsule = transform.position + ((mInputAxes.x > 0) ? 1 : -1) * transform.right * kBoundBox.x * 0.5f + Vector3.up * kBoundBox.y * -0.1f;
         Debug.DrawLine(topOfCapsule, bottomOfCapsule, Color.red);
-        Gizmos.DrawWireSphere(topOfCapsule, kBoundBox.y * 0.25f);
-        Gizmos.DrawWireSphere(bottomOfCapsule, kBoundBox.y * 0.25f);
+        Gizmos.DrawWireSphere(topOfCapsule, kBoundBox.x * 0.5f);
+        Gizmos.DrawWireSphere(bottomOfCapsule, kBoundBox.x * 0.5f);
+
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireSphere(transform.position + (transform.up * -1 * kBoundBox.y * 0.25f), 0.1f);
     }
 }
