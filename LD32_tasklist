@@ -1,15 +1,12 @@
 LD32 Feature Tasks
 ==================
-+ Death
-+ Main game loop Start -> Win/Lose -> Restart
-+ Goal Scenario
-+ More terrain types
-+ Clean up horizontal movement
++ Winning scenario?
 + Hooking non-hookables resolution?
 + UI
 + Write HOWTO
 
-LD32 Cleanup Tasks
+LD32 Improvement Tasks
 ==================
++ More terrain types
 + Vine renderer cleanup
 + Double jumping
