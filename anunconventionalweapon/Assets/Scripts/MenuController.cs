@@ -37,6 +37,9 @@ public class MenuController : MonoBehaviour
                                        ""
                                    };
 
+    // Support for future high scores
+    public float MeunHighScoresAlpha { get { return 0f; } }
+
     // Use this for initialization
     void Start()
     {
