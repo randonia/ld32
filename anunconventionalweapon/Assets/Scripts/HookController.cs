@@ -81,15 +81,14 @@ public class HookController : MonoBehaviour
                 break;
             case HookState.Hooking:
                 TickHooking();
+                if ((transform.position - Origin).sqrMagnitude >= kMaxLengthSqr)
+                {
+                    StopHooking();
+                }
                 break;
             case HookState.Attached:
                 TickAttached();
                 break;
-        }
-
-        if ((transform.position - Origin).sqrMagnitude >= kMaxLengthSqr)
-        {
-            StopHooking();
         }
     }
 

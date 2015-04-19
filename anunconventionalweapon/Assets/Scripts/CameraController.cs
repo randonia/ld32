@@ -23,7 +23,8 @@ public class CameraController : MonoBehaviour
     void Update()
     {
         Vector3 posDelta = mPlayer.transform.position - transform.position;
-        transform.Translate(kHorizontalCorrectionSpeed * (posDelta.x / kHorizontalMoveDistanceCap) * Time.deltaTime, 0f, 0f);
-        mMainCamera.orthographicSize = kCameraSize + Mathf.Abs(posDelta.x / kHorizontalMoveDistanceCap) * 0.5f;
+        posDelta.z = 0;
+        transform.Translate(posDelta * Time.deltaTime);
+        //mMainCamera.orthographicSize = kCameraSize + Mathf.Abs(posDelta.x / kHorizontalMoveDistanceCap) * 0.5f;
     }
 }

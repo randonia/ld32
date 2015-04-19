@@ -273,12 +273,10 @@ public class PlayerController : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("DepartingEffect");
         iTween.FadeTo(mPlayerRenderer, iTween.Hash("alpha", 0.0f, "time", 0.25f,
             "oncomplete", "FadeDeathMenu", "oncompletetarget", gameObject));
-        Debug.Log("FadeOut");
     }
 
     void FadeDeathMenu()
     {
-        Debug.Log("FadeDeathMenu");
         GameObject.Find("MenuController").GetComponent<MenuController>().MenuTransition(MenuController.MenuState.Death);
     }
 
