@@ -82,4 +82,23 @@ public class DebrisController : MonoBehaviour
         }
         Debug.DrawLine(transform.position, transform.position + Vector3.forward, myColor, kThrownLifeSpan);
     }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Terrain"))
+        {
+            FadeOut();
+        }
+    }
+
+    public void FadeOut()
+    {
+        gameObject.layer = LayerMask.NameToLayer("DepartingEffect");
+        iTween.FadeTo(gameObject, iTween.Hash("alpha", 0.0f, "time", 0.25f, "oncomplete", "DestroyObject"));
+    }
+
+    void DestroyObject()
+    {
+        GameObject.Destroy(gameObject);
+    }
 }

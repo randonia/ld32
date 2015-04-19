@@ -177,6 +177,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             newDebris = mDebris.Pop();
+            newDebris.SetActive(true);
         }
         newDebris.transform.position = mShotRenderer.transform.position;
         newDebris.GetComponent<Rigidbody>().velocity = mShootDir * kMaxThrowForce * shootVal;

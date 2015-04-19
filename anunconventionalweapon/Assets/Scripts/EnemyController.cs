@@ -28,6 +28,9 @@ public class EnemyController : MonoBehaviour
         Right
     }
 
+    public bool mDestroyedByDebrisOnly;
+    public bool mHookable;
+
     public GameObject PREFAB_EXPLOSION;
     private EnemyState mState;
     public PatrolMode mPatrolMode;
@@ -116,25 +119,47 @@ public class EnemyController : MonoBehaviour
 
     public void GetHooked()
     {
-        mState = EnemyState.Hooked;
-        Rigidbody body = GetComponent<Rigidbody>();
-        body.useGravity = true;
-        body.isKinematic = false;
-        body.mass = 10;
+        if (mHookable)
+        {
+            mState = EnemyState.Hooked;
+            Rigidbody body = GetComponent<Rigidbody>();
+            body.useGravity = true;
+            body.isKinematic = false;
+            body.mass = 10;
+        }
+        else
+        {
+            // Do nothing? Get stunned?
+        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         if (mState != EnemyState.Exploding && collision.gameObject.CompareTag("Terrain"))
         {
-            DoExplosion();
+            DoImpactExplosion();
+        }
+        if (collision.gameObject.CompareTag("Debris") && mDestroyedByDebrisOnly)
+        {
+            // Handle own explody logic
+            DoNonDebrisCreationExplosion();
+            collision.gameObject.GetComponent<DebrisController>().FadeOut();
         }
     }
 
-    private void DoExplosion()
+    private void DoNonDebrisCreationExplosion()
     {
         mState = EnemyState.Exploding;
         GameObject explosion = (GameObject)GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
+
+        GameObject.Destroy(gameObject);
+    }
+
+    private void DoImpactExplosion()
+    {
+        mState = EnemyState.Exploding;
+        GameObject explosion = (GameObject)GameObject.Instantiate(PREFAB_EXPLOSION, transform.position, Quaternion.identity);
+        explosion.GetComponent<ExplosionController>().StartDebrisExplosion();
         GameObject.Destroy(gameObject);
     }
 

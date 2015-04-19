@@ -11,6 +11,10 @@ public class ExplosionController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+    }
+
+    public void StartDebrisExplosion()
+    {
         // Create some debris
         int countToCreate = Random.Range(3, 5);
         for (int i = 0; i < countToCreate; ++i)
@@ -20,6 +24,11 @@ public class ExplosionController : MonoBehaviour
             GameObject debris = (GameObject)GameObject.Instantiate(PREFAB_DEBRIS, transform.position, randRot);
             debris.GetComponent<Rigidbody>().velocity = RandomExplosionVector();
         }
+    }
+
+    public void StartRegularExplosion()
+    {
+        // Do some regular explody stuff
     }
 
     private Vector3 RandomExplosionVector()
